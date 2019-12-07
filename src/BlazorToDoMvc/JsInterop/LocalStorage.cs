@@ -1,5 +1,6 @@
 ﻿using Microsoft.JSInterop;
 using System.Threading.Tasks;
+using System.Text.Json;
 
 namespace BlazorToDoMvc.JsInterop
 {
@@ -14,7 +15,7 @@ namespace BlazorToDoMvc.JsInterop
 
         public async Task<T> SetItemAsync<T>(string key, T value)
         {
-            var serializedValue = Json.Serialize(value);
+            var serializedValue = JsonSerializer.Serialize(value);
             var item = await _jSRuntime.InvokeAsync<string>("setItemFromLocalStorage", key, serializedValue);
             return value;
         }
@@ -26,7 +27,7 @@ namespace BlazorToDoMvc.JsInterop
             if (item == null)
                 return default;
 
-            return Json.Deserialize<T>(item);
+            return JsonSerializer.Deserialize<T>(item);
         }
     }
 }

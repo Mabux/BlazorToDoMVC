@@ -1,23 +1,23 @@
 ﻿@page "/"
 @using BlazorToDoMvc.JsInterop;
-@inject LocalStorage Storage
+@inject LocalStorage Storage;
 
 <section class="todoapp">
     <header class="header">
         <h1>todos</h1>
-        <input class="new-todo" placeholder="What needs to be done?" autofocus bind="@CurrentTitle" onkeyup=@((args) => AddToList(args, CurrentTitle)) />
+        <input class="new-todo" placeholder="what needs to be done ?" autofocus @bind="CurrentTitle" @onkeyup="@((args) => AddToList(args, CurrentTitle))" />
     </header>
     <section class="main">
-        <input class="toggle-all" type="checkbox">
+        <input type="checkbox" class="toggle-all" />
         <label for="toggle-all">Mark all as complete</label>
         <ul class="todo-list">
             @foreach (var item in ToDoItems)
             {
-                <li class=@(item.IsCompleted ? "completed" : null)>
+                <li class="@(item.IsCompleted ? "completed" : null)">
                     <div class="view">
-                        <input class="toggle" type="checkbox" checked="@item.IsCompleted" onclick=@(() => MarkAsCompleted(item.Id)) />
+                        <input class="toggle" type="checkbox" checked="@item.IsCompleted" @onclick="@(() => MarkAsCompleted(item.Id))" />
                         <label>@item.Title</label>
-                        <button class="destroy" onclick=@(() => DeleteItemFromList(item.Id))></button>
+                        <button class="destroy" @onclick="@(() => DeleteItemFromList(item.Id))"></button>
                     </div>
                 </li>
             }
@@ -27,7 +27,7 @@
         <span class="todo-count">@ToDoItems.Count(t => !t.IsCompleted) left</span>
         @if (ToDoItems.Count(t => !t.IsCompleted) > 0)
         {
-            <button class="clear-completed" onclick=@(ClearCompleted)>Clear completed</button>
+            <button class="clear-completed" @onclick="@(ClearCompleted)">Clear completed</button>
         }
     </footer>
 </section>
@@ -37,8 +37,7 @@
     List<ToDoItem> ToDoItems = new List<ToDoItem>();
     string storageKey = "ToDoItems";
 
-
-    protected override async Task OnInitAsync()
+    protected override async Task OnInitializedAsync()
     {
         var existingItems = await Storage.GetItemAsync<List<ToDoItem>>(storageKey);
 
@@ -48,7 +47,7 @@
         }
     }
 
-    async Task AddToList(UIKeyboardEventArgs args, string currentTitle)
+    async Task AddToList(KeyboardEventArgs args, string currentTitle)
     {
         if (!args.Key.Equals("Enter", StringComparison.OrdinalIgnoreCase))
         {
